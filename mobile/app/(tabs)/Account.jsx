@@ -50,7 +50,7 @@ const AccountScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loaderanimate}>
         <LottieView
           source={require("../../assets/animations/loader.json")}
           autoPlay
@@ -125,5 +125,12 @@ const styles = StyleSheet.create({
   animation: {
     width: 200,
     height: 200,
+  },
+
+  loaderanimate: {
+    flex: 1,
+    backgroundColor: "#F3E5F5",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
