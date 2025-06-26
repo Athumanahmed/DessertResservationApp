@@ -58,7 +58,7 @@ const TabsLayout = () => {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="HomeScreen"
         options={{
           title: "Recipes",
           tabBarIcon: ({ color, size }) => (
