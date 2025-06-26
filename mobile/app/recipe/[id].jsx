@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -15,6 +16,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
 import { WebView } from "react-native-webview";
+import { getToken } from "../../lib/storage";
+import AxiosInstance from "../../lib/dessertAPI";
+import axios from "axios";
 
 const RecipeDetailsScreen = () => {
   const { id: recipeId } = useLocalSearchParams();
@@ -39,6 +43,34 @@ const RecipeDetailsScreen = () => {
           };
 
           setRecipe(recipeWithVideo);
+
+          const checkIfSaved = async () => {
+            try {
+              const token = await getToken();
+              if (!token) return;
+
+              const headers = { Authorization: `Bearer ${token}` };
+              const res = await AxiosInstance.get(
+                `/api/v1/users/user-reservations`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+
+              const savedList = res.data.data || [];
+              const alreadySaved = savedList.some(
+                (r) => r.recipeId === recipeId
+              );
+
+              setIsSaved(alreadySaved);
+            } catch (err) {
+              console.error("Check saved error", err);
+            }
+          };
+
+          checkIfSaved();
         }
       } catch (error) {
         console.error("Error loading recipe detail:", error);
@@ -69,7 +101,57 @@ const RecipeDetailsScreen = () => {
     );
   }
 
-  const handleToggleSave = async () => {};
+  const handleToggleSave = async () => {
+    try {
+      setIsSaving(true);
+
+      const token = await getToken();
+      if (!token) {
+        alert("Please log in first.");
+        return;
+      }
+
+      if (isSaved) {
+        const { data } = await AxiosInstance.delete(
+          `/api/v1/users/${recipeId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (data.success) {
+          setIsSaved(false);
+          Alert.alert("Success", data.message);
+        }
+      } else {
+        const { data } = await AxiosInstance.post(
+          `/api/v1/users/reserve`,
+          {
+            recipeId: recipeId,
+            title: recipe.title,
+            image: recipe.image,
+            cookTime: recipe.cookTime,
+            servings: recipe.servings,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (data.success) {
+          setIsSaved(true);
+          Alert.alert("Success", data.message);
+        }
+      }
+    } catch (error) {
+      Alert.alert(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
+  };
   return (
     <View style={recipeDetailStyles.container}>
       <ScrollView>
@@ -294,9 +376,8 @@ const RecipeDetailsScreen = () => {
               colors={[COLORS.primary, COLORS.primary + "CC"]}
               style={recipeDetailStyles.buttonGradient}
             >
-              <Ionicons name="heart" size={20} color={COLORS.white} />
               <Text style={recipeDetailStyles.buttonText}>
-                {isSaved ? "Remove from Favorites" : "Add to Favorites"}
+                {isSaved ? "Remove Reservation" : "Add Reservation"}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
