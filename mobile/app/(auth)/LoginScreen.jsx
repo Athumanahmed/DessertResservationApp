@@ -19,9 +19,11 @@ import { COLORS } from "../../constants/colors";
 import AxiosInstance from "../../lib/dessertAPI";
 import { saveToken } from "../../lib/storage";
 import { ActivityIndicator } from "react-native";
+// import { useToast } from "react-native-toast-notifications";
 
 const SignInScreen = () => {
   const router = useRouter();
+  // const toast = useToast();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,6 +33,18 @@ const SignInScreen = () => {
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert("Validation Error", "Please enter both email and password.");
+
+      // toasters (package name: react-native-toast-message)
+      // Toast.show({
+      //   type: "error",
+      //   // text1: "Validation error",
+      //   text1: "Please enter both email and password",
+      // });
+
+      // toast.show("Please enter both email and password", { type: "error" });
+
+      // 3. another toaster
+      // Toast.show("Please enter both email and password.");
       return;
     }
 
