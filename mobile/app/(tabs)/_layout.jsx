@@ -96,7 +96,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="Reservations"
         options={{
-          title: "Favorites",
+          title: "Reservations",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" size={size} color={color} />
           ),
