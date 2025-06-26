@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*   # In case you have .env.development, .env.production etc.
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build / Output folders
+dist/
+build/
+out/
+
+# Cache / Temp files
+.cache/
+.next/
+.vite/
+tmp/
+temp/
+
+# Coverage reports
+coverage/
+
+# IDE specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Others
+*.local
+*.tgz
+
+
